@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categories</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <div class="logo">Clothify</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="categories.html">Categories</a>
+        <a href="cart.html">Cart</a>
+        <button id="darkModeToggle">🌙 Dark Mode</button>
+    </nav>
+</header>
+
+<div class="container">
+    <h2 id="categoryTitle">Category</h2>
+    <div class="products-grid" id="productsContainer"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+// Products DB
+const productsDB = {
+    men: Array.from({length:10}, (_,i)=>({id: i+1, name:`Men Shirt ${i+1}`, price:20+i, image:`men${i+1}.jpg`})),
+    women: Array.from({length:10}, (_,i)=>({id: i+11, name:`Women Dress ${i+1}`, price:25+i, image:`women${i+1}.jpg`})),
+    kids: Array.from({length:10}, (_,i)=>({id: i+21, name:`Kids Outfit ${i+1}`, price:15+i, image:`kids${i+1}.jpg`})),
+    accessories: Array.from({length:10}, (_,i)=>({id: i+31, name:`Accessory ${i+1}`, price:10+i, image:`accessories${i+1}.jpg`})),
+};
+
+// Current category
+const urlParams = new URLSearchParams(window.location.search);
+const cat = urlParams.get('cat') || 'men';
+document.getElementById('categoryTitle').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+const currentProducts = productsDB[cat];
+
+// Render products
+const container = document.getElementById('productsContainer');
+currentProducts.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+        <img src="images/${p.image}" alt="${p.name}">
+        <div class="card-content">
+            <h3>Rs.{p.name}</h3>
+            <p>Rs.${p.price.toFixed(2)}</p>
+            <button data-id="Rs.{p.id}">Add to Cart</button>
+        </div>
+    `;
+    container.appendChild(card);
+});
+
+// Add event listeners
+container.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+        const id = parseInt(btn.getAttribute('data-id'));
+        const item = currentProducts.find(p=>p.id===id);
+        addToCart(item); // function from script.js
+    });
+});
+</script>
+</body>
+</html>
